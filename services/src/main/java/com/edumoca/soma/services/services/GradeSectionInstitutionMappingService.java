@@ -1,0 +1,18 @@
+package com.edumoca.soma.services.services;
+
+import com.edumoca.soma.entities.GradeSectionInstitutionMapping;
+import com.edumoca.soma.entities.dtos.GradeSectionInstitutionMappingDTO;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+public interface GradeSectionInstitutionMappingService {
+	GradeSectionInstitutionMappingDTO createGradeSectionInstitutionMapping(GradeSectionInstitutionMapping gradeSectionInstitutionMapping);
+	GradeSectionInstitutionMappingDTO updateGradeSectionInstitutionMapping(GradeSectionInstitutionMapping gradeSectionInstitutionMapping,Integer gradeSectionInstitutionMappingId);
+	List<GradeSectionInstitutionMappingDTO> getAllGradeSectionInstitutionMappingByInstitution(Integer institutionId);
+	GradeSectionInstitutionMappingDTO getGradeSectionInstitutionMappingByInstitutionAndGradeSectionInstitutionMappingId(Integer institutionId,Integer gradeSectionInstitutionMappingId);
+	Map<String, Set<GradeSectionInstitutionMappingDTO>> loadGradeSectionInstitutionMapping(XSSFSheet gradeSectionInstitutionMappingSheet,String gradeSectionInstitutionMappingSheetName);
+
+}

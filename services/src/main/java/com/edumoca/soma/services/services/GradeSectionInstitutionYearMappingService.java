@@ -1,0 +1,19 @@
+package com.edumoca.soma.services.services;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import com.edumoca.soma.entities.dtos.GradeSectionInstitutionYearMappingDTO;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+
+import com.edumoca.soma.entities.GradeSectionInstitutionYearMapping;
+
+public interface GradeSectionInstitutionYearMappingService {
+	GradeSectionInstitutionYearMappingDTO createGradeSectionInstitutionYearMapping(GradeSectionInstitutionYearMapping gradeSectionInstitutionYearMapping);
+	GradeSectionInstitutionYearMappingDTO updateGradeSectionInstitutionYearMapping(GradeSectionInstitutionYearMapping gradeSectionInstitutionYearMapping,Integer gradeSectionInstitutionYearMappingId);
+	List<GradeSectionInstitutionYearMappingDTO> getAllGradeSectionInstitutionYearMappingByInstitution(Integer institutionId);
+	GradeSectionInstitutionYearMappingDTO getGradeSectionInstitutionYearMappingByInstitutionAndGradeSectionInstitutionYearMapping(Integer institutionId,Integer gradeSectionYearInstitutionId);
+
+	Map<String, Set<GradeSectionInstitutionYearMappingDTO>> loadGradeSectionInstitutionYearMappings(XSSFSheet gradeSectionInstitutionYearMappingSheet, String gradeSectionInstitutionYearMappingSheetName);
+}
