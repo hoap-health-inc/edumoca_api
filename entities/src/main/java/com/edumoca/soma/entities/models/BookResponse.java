@@ -8,10 +8,9 @@ import lombok.Getter;
 public class BookResponse {
     int bookId;
     String bookName;
-   // String gradeName;
     String subjectName;
     boolean hasDigitalCopy;
     String bookFormat;
-    String bookLocation;
-    String bookCoverPageLocation;
+    String bookLocationId;
+    String coverPage;
 }

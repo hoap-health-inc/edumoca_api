@@ -1,9 +1,7 @@
 package com.edumoca.soma.services.services.impl;
 
-import com.edumoca.soma.entities.Book;
 import com.edumoca.soma.services.beans.LoadFile;
 import com.edumoca.soma.services.services.GridFSFileService;
-import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import lombok.AllArgsConstructor;

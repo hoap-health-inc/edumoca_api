@@ -1,13 +1,12 @@
 package com.edumoca.soma.entities.repositories;
 
-import java.util.List;
-
+import com.edumoca.soma.entities.CourseSession;
 import com.edumoca.soma.entities.models.CourseSessionResponse;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
-
-import com.edumoca.soma.entities.CourseSession;
 import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 public interface CourseSessionRepository extends PagingAndSortingRepository<CourseSession,	Integer>{
 

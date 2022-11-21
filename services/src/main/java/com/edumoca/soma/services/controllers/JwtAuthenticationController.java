@@ -1,7 +1,12 @@
 package com.edumoca.soma.services.controllers;
-import java.util.Objects;
 
+import com.edumoca.soma.services.config.JwtTokenUtil;
+import com.edumoca.soma.services.security.models.JwtRequest;
+import com.edumoca.soma.services.security.models.JwtResponse;
 import com.edumoca.soma.services.services.UsersService;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,19 +16,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.edumoca.soma.services.config.JwtTokenUtil;
-import com.edumoca.soma.services.security.models.JwtRequest;
-import com.edumoca.soma.services.security.models.JwtResponse;
-
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.Objects;
 
 @RestController
 @CrossOrigin

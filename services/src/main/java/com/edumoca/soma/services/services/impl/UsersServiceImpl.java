@@ -1,18 +1,19 @@
 package com.edumoca.soma.services.services.impl;
 
-import java.io.*;
-import java.time.ZoneId;
-import java.util.*;
-
 import com.edumoca.soma.entities.*;
-import com.edumoca.soma.entities.dtos.*;
-import com.edumoca.soma.entities.models.*;
+import com.edumoca.soma.entities.dtos.AdminDto;
+import com.edumoca.soma.entities.dtos.ParentDto;
+import com.edumoca.soma.entities.dtos.StudentDto;
+import com.edumoca.soma.entities.dtos.TeacherDto;
+import com.edumoca.soma.entities.exception.DataNotFoundException;
+import com.edumoca.soma.entities.models.AdminResponse;
+import com.edumoca.soma.entities.models.ParentResponse;
+import com.edumoca.soma.entities.models.StudentResponse;
+import com.edumoca.soma.entities.models.TeacherResponse;
 import com.edumoca.soma.entities.repositories.*;
-import com.edumoca.soma.services.beans.LoadFile;
 import com.edumoca.soma.services.fileUtils.FileOperationUtils;
-import com.edumoca.soma.services.services.GridFSFileService;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
+import com.edumoca.soma.services.services.ProfilePhotoService;
+import com.edumoca.soma.services.services.UsersService;
 import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -21,9 +22,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.edumoca.soma.entities.exception.DataNotFoundException;
-import com.edumoca.soma.services.services.UsersService;
-import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
+import java.time.ZoneId;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -34,13 +35,12 @@ public class UsersServiceImpl implements UsersService {
     private final HomeRoomTeacherRepository homeRoomTeacherRepository;
     private final SubjectHeadRepository subjectHeadRepository;
     private final PrincipalRepository principalRepository;
-    private final GradeSectionInstitutionYearMappingRepository gradeSectionInstitutionYearMappingRepository;
+    private final GradeSectionInstitutionYearMapRepository gradeSectionInstitutionYearMappingRepository;
     private final RoleRepository roleRepository;
     private final DepartmentRepository departmentRepository;
     private final SchoolAdminRepository schoolAdminRepository;
     private final SuperAdminRepository superAdminRepository;
-
-    private final GridFSFileService gridFSFileService;
+    private final ProfilePhotoService profilePhotoService;
 
     @Override
     public Student registerStudent(Student student) {
@@ -124,81 +124,72 @@ public class UsersServiceImpl implements UsersService {
 	}
 
     @Override
-    public StudentDTO showStudentDetails(String userName) throws IOException {
+    public StudentDto showStudentDetails(String userName){
         StudentResponse studentResponse = studentRepository.getStudentByLoginId(userName);
-        LoadFile loadFile = gridFSFileService.downloadFile(studentResponse.getProfilePic());
-        StudentDTO studentDTO = new StudentDTO();
-        BeanUtils.copyProperties(studentResponse,studentDTO);
-        studentDTO.setFullName(studentResponse.getLastName().concat(" "+studentResponse.getFirstName().concat(" "+studentResponse.getMiddleName())));
-        studentDTO.setProfilePic(loadFile.getFile());
-        return studentDTO;
+        StudentDto studentDto = new StudentDto();
+        BeanUtils.copyProperties(studentResponse,studentDto);
+        studentDto.setFullName(studentResponse.getLastName().concat(" "+studentResponse.getFirstName().concat(" "+studentResponse.getMiddleName())));
+        studentDto.setProfilePic(profilePhotoService.getProfilePhotoData(studentResponse.getProfilePic()).getPhoto().getData());
+        return studentDto;
     }
 
     @Override
-    public TeacherDTO showTeacherDetails(String userName) throws IOException {
-        return convertTeacherResponseToDTO(teacherRepository.getTeacherByLoginId(userName));
-    }
-
-    @Override
-    public TeacherDTO showSubjectHeadDetails(String userName) throws IOException {
-        return convertTeacherResponseToDTO(subjectHeadRepository.getSubjectHeadByLoginId(userName));
-    }
-
-    @Override
-    public TeacherDTO showHomeRoomDetails(String userName) throws IOException {
-        return convertTeacherResponseToDTO(homeRoomTeacherRepository.getHomeRoomByLoginId(userName));
-    }
-
-    @Override
-    public TeacherDTO showSchoolAdminByLoginId(String userName) throws IOException {
-        SchoolAdminResponse schoolAdminResponse = schoolAdminRepository.getSchoolAdminByLoginId(userName);
-        LoadFile loadFile = gridFSFileService.downloadFile(schoolAdminResponse.getProfilePic());
-        TeacherDTO teacherDTO = new TeacherDTO();
-        BeanUtils.copyProperties(schoolAdminResponse,teacherDTO);
-        teacherDTO.setFullName(schoolAdminResponse.getLastName().concat(" "+schoolAdminResponse.getFirstName().concat(" "+schoolAdminResponse.getMiddleName())));
-        teacherDTO.setProfilePic(loadFile.getFile());
-        return teacherDTO;
-    }
-
-    @Override
-    public TeacherDTO showSuperAdminByLoginId(String userName) throws IOException {
-        SuperAdminResponse superAdminResponse = superAdminRepository.getSuperAdminByLoginId(userName);
-        LoadFile loadFile = gridFSFileService.downloadFile(superAdminResponse.getProfilePic());
-        TeacherDTO teacherDTO = new TeacherDTO();
-        BeanUtils.copyProperties(superAdminResponse,teacherDTO);
-        teacherDTO.setFullName(superAdminResponse.getLastName().concat(" "+superAdminResponse.getFirstName().concat(" "+superAdminResponse.getMiddleName())));
-        teacherDTO.setProfilePic(loadFile.getFile());
-        return teacherDTO;
-    }
-
-    @Override
-    public ParentDTO showParentByLoginId(String userName) throws IOException{
+    public ParentDto showParentByLoginId(String userName){
         ParentResponse parentResponse = parentRepository.getParentByLoginId(userName);
-        LoadFile loadFile = gridFSFileService.downloadFile(parentResponse.getProfilePic());
-        ParentDTO parentDTO = new ParentDTO();
-        BeanUtils.copyProperties(parentResponse,parentDTO);
-        parentDTO.setProfilePic(loadFile.getFile());
-        return  parentDTO;
+        ParentDto parentDto = new ParentDto();
+        BeanUtils.copyProperties(parentResponse,parentDto);
+        parentDto.setProfilePic(profilePhotoService.getProfilePhotoData(parentResponse.getProfilePic()).getPhoto().getData());
+        return  parentDto;
     }
 
     @Override
-    public TeacherDTO showPrincipalByLoginId(String userName) throws IOException{
-        return convertTeacherResponseToDTO(principalRepository.getPrincipalByLoginId(userName));
-    }
-
-    private TeacherDTO convertTeacherResponseToDTO(TeacherResponse teacherResponse) throws IOException {
-        LoadFile loadFile = gridFSFileService.downloadFile(teacherResponse.getProfilePic());
-        TeacherDTO teacherDTO = new TeacherDTO();
-        BeanUtils.copyProperties(teacherResponse,teacherDTO);
-        teacherDTO.setFullName(teacherResponse.getLastName().concat(" "+teacherResponse.getFirstName().concat(" "+teacherResponse.getMiddleName())));
-        teacherDTO.setProfilePic(loadFile.getFile());
-        return teacherDTO;
+    public TeacherDto showTeacherDetails(String userName){
+        return convertTeacherResponseToDto(teacherRepository.getTeacherByLoginId(userName));
     }
 
     @Override
-    public Map<String,Set<StudentDTO>> loadStudents(XSSFSheet studentsSheet, String studentsSheetName) {
-        Map<String,Set<StudentDTO>> studentsMap = new HashMap<>();
-        Set<StudentDTO> studentsSet = new HashSet<>();
+    public TeacherDto showSubjectHeadDetails(String userName){
+        return convertTeacherResponseToDto(subjectHeadRepository.getSubjectHeadByLoginId(userName));
+    }
+
+    @Override
+    public TeacherDto showHomeRoomDetails(String userName){
+        return convertTeacherResponseToDto(homeRoomTeacherRepository.getHomeRoomByLoginId(userName));
+    }
+
+    @Override
+    public AdminDto showSchoolAdminByLoginId(String userName){
+        return convertAdminResponseToDto(schoolAdminRepository.getSchoolAdminByLoginId(userName));
+    }
+
+    @Override
+    public AdminDto showSuperAdminByLoginId(String userName){
+        return convertAdminResponseToDto(superAdminRepository.getSuperAdminByLoginId(userName));
+    }
+    @Override
+    public TeacherDto showPrincipalByLoginId(String userName){
+        return convertTeacherResponseToDto(principalRepository.getPrincipalByLoginId(userName));
+    }
+    private TeacherDto convertTeacherResponseToDto(TeacherResponse teacherResponse){
+        TeacherDto teacherDto = new TeacherDto();
+        BeanUtils.copyProperties(teacherResponse,teacherDto);
+        teacherDto.setFullName(teacherResponse.getLastName().concat(" "+teacherResponse.getFirstName().concat(" "+teacherResponse.getMiddleName())));
+        teacherDto.setProfilePic(profilePhotoService.getProfilePhotoData(teacherResponse.getProfilePic()).getPhoto().getData());
+        return teacherDto;
+    }
+
+    private AdminDto convertAdminResponseToDto(AdminResponse adminResponse){
+        AdminDto adminDto = new AdminDto();
+        BeanUtils.copyProperties(adminResponse,adminDto);
+        adminDto.setFullName(adminResponse.getLastName().concat(" "+adminResponse.getFirstName().concat(" "+adminResponse.getMiddleName())));
+        adminDto.setProfilePic(profilePhotoService.getProfilePhotoData(adminResponse.getProfilePic()).getPhoto().getData());
+        return adminDto;
+    }
+
+    @Override
+    public Map<String,Set<StudentDto>> loadStudents(XSSFSheet studentsSheet, String studentsSheetName) {
+        Map<String,Set<StudentDto>> studentsMap = new HashMap<>();
+        Set<StudentDto> studentsSet = new HashSet<>();
         Set<Role> roles = new HashSet<>();
             studentsSheet.rowIterator().forEachRemaining(row -> {
                 if (row.getRowNum() > 0) {
@@ -214,14 +205,10 @@ public class UsersServiceImpl implements UsersService {
                     }
 
                     student.setMiddleName("");
-
-                //    student.setFullName(student.getLastName().concat(student.getFirstName().concat(student.getMiddleName())));
-
                     student.setDateOfBirth(row.getCell(4).getDateCellValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
                     student.setGender(Gender.valueOf(row.getCell(5).getStringCellValue()));
-                    //generate gridfs id based on fileuploaded
                     try {
-                        student.setProfilePic(generateUniqueIdForUser(row.getCell(6).getStringCellValue(), student));
+                        student.setProfilePic(profilePhotoService.uploadPhoto(row.getCell(2).getStringCellValue(),FileOperationUtils.convertFileToMultipartFile(row.getCell(6).getStringCellValue())));
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -229,8 +216,8 @@ public class UsersServiceImpl implements UsersService {
                     student.setCitizenShip(row.getCell(8).getStringCellValue());
                     student.setPresentAddress(row.getCell(9).getStringCellValue());
                     student.setPermanantAddress(row.getCell(10).getStringCellValue());
-                    Optional<GradeSectionInstitutionYearMapping> gradeSectionInstitutionYearMapping = gradeSectionInstitutionYearMappingRepository.findById(new Double(row.getCell(11).getNumericCellValue()).intValue());
-                    gradeSectionInstitutionYearMapping.ifPresent(student::setGradeSectionInstitutionYearMapping);
+                    Optional<GradeSectionInstitutionYearMap> gradeSectionInstitutionYearMapping = gradeSectionInstitutionYearMappingRepository.findById(new Double(row.getCell(11).getNumericCellValue()).intValue());
+                    gradeSectionInstitutionYearMapping.ifPresent(student::setGradeSectionInstitutionYearMap);
                     student.setLrn(String.valueOf(row.getCell(12).getNumericCellValue()));
                     student.setPsaRegNumber(String.valueOf(row.getCell(13).getNumericCellValue()));
                     student.setReligion(row.getCell(14).getStringCellValue());
@@ -241,10 +228,9 @@ public class UsersServiceImpl implements UsersService {
                     role.ifPresent(roles::add);
                     student.setRoles(roles);
                     studentRepository.save(student);
-                    StudentDTO studentDTO = new StudentDTO();
+                    StudentDto studentDTO = new StudentDto();
                     studentDTO.setUserId(student.getUserId());
                     studentDTO.setLoginId(student.getLoginId());
-                   // studentDTO.setFullName(student.getFullName());
                     studentDTO.setGender(student.getGender());
                     studentDTO.setDateOfBirth(student.getDateOfBirth());
                     studentDTO.setLrn(student.getLrn());
@@ -256,9 +242,9 @@ public class UsersServiceImpl implements UsersService {
         return studentsMap;
     }
     @Override
-    public Map<String, Set<TeacherDTO>> loadTeachers(XSSFSheet teachersSheet, String teachersSheetName,Class<?> teacherType) {
-        Map<String,Set<TeacherDTO>> teachersMap = new HashMap<>();
-        Set<TeacherDTO> teachersSet = new HashSet<>();
+    public Map<String, Set<TeacherDto>> loadTeachers(XSSFSheet teachersSheet, String teachersSheetName, Class<?> teacherType) {
+        Map<String,Set<TeacherDto>> teachersMap = new HashMap<>();
+        Set<TeacherDto> teachersSet = new HashSet<>();
         Set<Role> roles = new HashSet<>();
 
         teachersSheet.rowIterator().forEachRemaining(row->{
@@ -269,25 +255,21 @@ public class UsersServiceImpl implements UsersService {
                     teacher.setLoginId(row.getCell(0).getStringCellValue());
                     teacher.setPassword(new BCryptPasswordEncoder().encode(row.getCell(1).getStringCellValue()));
                     teacher.setFirstName(row.getCell(2).getStringCellValue());
-
                     if(Optional.ofNullable(row.getCell(3)).isPresent()) {
                         teacher.setLastName(row.getCell(3).getStringCellValue());
                     }else{
                         teacher.setLastName("");
                     }
-
                     teacher.setMiddleName("");
-                    //teacher.setFullName(teacher.getLastName().concat(teacher.getFirstName().concat(teacher.getMiddleName())));
-
                     teacher.setGender(Gender.valueOf(row.getCell(4).getStringCellValue()));
                     teacher.setEmailAddress(row.getCell(5).getStringCellValue());
                     teacher.setPresentAddress(row.getCell(6).getStringCellValue());
                     teacher.setPermanantAddress(row.getCell(7).getStringCellValue());
-
-                    //generate gridfs id based on fileuploaded
-                    teacher.setProfilePic(generateUniqueIdForUser(row.getCell(8).getStringCellValue(),teacher));
-
-                    //teacher.setProfilePic(row.getCell(8).getStringCellValue());
+                    try {
+                        teacher.setProfilePic(profilePhotoService.uploadPhoto(row.getCell(2).getStringCellValue(),FileOperationUtils.convertFileToMultipartFile(row.getCell(8).getStringCellValue())));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                     Optional<Role> role = roleRepository.findById(new Double(row.getCell(9).getNumericCellValue()).intValue());
                     role.ifPresent(roles::add);
                     teacher.setRoles(roles);
@@ -296,8 +278,8 @@ public class UsersServiceImpl implements UsersService {
                         department.ifPresent(teacher::setDepartment);
                         teacher.setMotherTongue(row.getCell(11).getStringCellValue());
                     }else if(HomeRoomTeacher.class.getCanonicalName().equals(teacherType.getCanonicalName())){
-                        Optional<GradeSectionInstitutionYearMapping> gradeSectionInstitutionYearMapping = gradeSectionInstitutionYearMappingRepository.findById(new Double(row.getCell(11).getNumericCellValue()).intValue());
-                        gradeSectionInstitutionYearMapping.ifPresent(gradeSectionInstitutionYearMapping1 -> ((HomeRoomTeacher) teacher).setGradeSectionInstitutionYearMapping(gradeSectionInstitutionYearMapping1));
+                        Optional<GradeSectionInstitutionYearMap> gradeSectionInstitutionYearMapping = gradeSectionInstitutionYearMappingRepository.findById(new Double(row.getCell(11).getNumericCellValue()).intValue());
+                        gradeSectionInstitutionYearMapping.ifPresent(gradeSectionInstitutionYearMapping1 -> ((HomeRoomTeacher) teacher).setGradeSectionInstitutionYearMap(gradeSectionInstitutionYearMapping1));
                         Optional<Department> department = departmentRepository.findById(new Double(row.getCell(11).getNumericCellValue()).intValue());
                         department.ifPresent(teacher::setDepartment);
                         teacher.setMotherTongue(row.getCell(12).getStringCellValue());
@@ -306,10 +288,9 @@ public class UsersServiceImpl implements UsersService {
                         noDeptFlag = true;
                     }
                     teacherRepository.save(teacher);
-                    TeacherDTO teacherDTO = new TeacherDTO();
+                    TeacherDto teacherDTO = new TeacherDto();
                     teacherDTO.setUserId(teacher.getUserId());
                     teacherDTO.setLoginId(teacher.getLoginId());
-                   // teacherDTO.setFullName(teacher.getFullName());
                     teacherDTO.setGender(teacher.getGender());
                     System.out.println(SchoolAdmin.class.getCanonicalName());
                     System.out.println(teacherType.getCanonicalName());
@@ -320,7 +301,7 @@ public class UsersServiceImpl implements UsersService {
                         teacherDTO.setDepartmentName(teacher.getDepartment().getDeptName());
                     teacherDTO.setEmailAddress(teacher.getEmailAddress());
                     teachersSet.add(teacherDTO);
-                } catch (InstantiationException | IllegalAccessException | IOException e) {
+                } catch (InstantiationException | IllegalAccessException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -330,9 +311,9 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public Map<String, Set<ParentDTO>> loadParents(XSSFSheet parentsSheet,String parentsSheetName){
-        Map<String,Set<ParentDTO>> parentsMap = new HashMap<>();
-        Set<ParentDTO> parentsSet = new HashSet<>();
+    public Map<String, Set<ParentDto>> loadParents(XSSFSheet parentsSheet, String parentsSheetName){
+        Map<String,Set<ParentDto>> parentsMap = new HashMap<>();
+        Set<ParentDto> parentsSet = new HashSet<>();
         Set<Role> roles = new HashSet<>();
         parentsSheet.rowIterator().forEachRemaining(row-> {
             if (row.getRowNum() > 0) {
@@ -368,11 +349,10 @@ public class UsersServiceImpl implements UsersService {
         return parentsMap;
     }
 
-    private Set<ParentDTO> wrapParentDataIntoDTO(Parent parent,Set<ParentDTO> parentDTOSet){
-        ParentDTO parentDTO = new ParentDTO();
+    private Set<ParentDto> wrapParentDataIntoDTO(Parent parent, Set<ParentDto> parentDTOSet){
+        ParentDto parentDTO = new ParentDto();
         parentDTO.setUserId(parent.getUserId());
         parentDTO.setLoginId(parent.getLoginId());
-       // parentDTO.setFullName(parent.getFullName());
         parentDTO.setOccupation(parent.getOccupation());
         parentDTO.setEmailAddress(parent.getEmailAddress());
         parentDTOSet.add(parentDTO);
@@ -380,7 +360,6 @@ public class UsersServiceImpl implements UsersService {
     }
     private Parent populateFatherDateIntoFatherObject(Row row){
         Parent father = new Parent();
-        try{
             father.setLoginId(row.getCell(0).getStringCellValue());
             father.setPassword(new BCryptPasswordEncoder().encode(row.getCell(1).getStringCellValue()));
             father.setFirstName(row.getCell(2).getStringCellValue());
@@ -391,22 +370,20 @@ public class UsersServiceImpl implements UsersService {
             }
             father.setLastName(row.getCell(4).getStringCellValue());
             father.setGender(Gender.valueOf(row.getCell(5).getStringCellValue()));
-          //  father.setFullName(father.getLastName().concat(father.getFirstName().concat(father.getMiddleName())));
-            //generate gridfs id based on fileuploaded
-            father.setProfilePic(generateUniqueIdForUser(row.getCell(6).getStringCellValue(),father));
+            try {
+                father.setProfilePic(profilePhotoService.uploadPhoto(row.getCell(2).getStringCellValue(),FileOperationUtils.convertFileToMultipartFile(row.getCell(6).getStringCellValue())));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             father.setEmailAddress(row.getCell(7).getStringCellValue());
             father.setMotherTongue(row.getCell(8).getStringCellValue());
             father.setOccupation(row.getCell(9).getStringCellValue());
             father.setParentType(ParentType.valueOf(row.getCell(10).getStringCellValue()));
-        }catch(IOException e){
-            e.printStackTrace();
-        }
         return father;
     }
 
     private Parent populateMotherDataIntoMotherObject(Row row){
         Parent mother = new Parent();
-        try{
             mother.setLoginId(row.getCell(11).getStringCellValue());
             mother.setPassword(new BCryptPasswordEncoder().encode(row.getCell(12).getStringCellValue()));
             mother.setFirstName(row.getCell(13).getStringCellValue());
@@ -417,23 +394,15 @@ public class UsersServiceImpl implements UsersService {
             }
             mother.setLastName(row.getCell(15).getStringCellValue());
             mother.setGender(Gender.valueOf(row.getCell(16).getStringCellValue()));
-            //generate gridfs id based on fileuploaded
-            mother.setProfilePic(generateUniqueIdForUser(row.getCell(17).getStringCellValue(),mother));
+            try {
+                mother.setProfilePic(profilePhotoService.uploadPhoto(row.getCell(13).getStringCellValue(),FileOperationUtils.convertFileToMultipartFile(row.getCell(17).getStringCellValue())));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             mother.setEmailAddress(row.getCell(18).getStringCellValue());
             mother.setMotherTongue(row.getCell(19).getStringCellValue());
             mother.setOccupation(row.getCell(20).getStringCellValue());
-        }catch(IOException e){
-            e.printStackTrace();
-        }
         return mother;
     }
 
-    private String generateUniqueIdForUser(String cellValue,AppUser appUser) throws IOException {
-        MultipartFile uploadFilePath = FileOperationUtils.convertFileToMultipartFile(cellValue);
-        DBObject metadata = new BasicDBObject();
-        metadata.put("User Name",appUser.getFullName());
-        metadata.put("fileSize", uploadFilePath.getSize());
-        appUser.setProfilePic(gridFSFileService.uploadFile(uploadFilePath,metadata));
-        return  appUser.getProfilePic();
-    }
 }

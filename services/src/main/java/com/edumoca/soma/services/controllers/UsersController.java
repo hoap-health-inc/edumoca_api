@@ -1,30 +1,22 @@
 package com.edumoca.soma.services.controllers;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.Objects;
-import java.util.Optional;
-
-import javax.validation.constraints.NotNull;
-
 import com.edumoca.soma.entities.*;
 import com.edumoca.soma.services.services.GridFSFileService;
+import com.edumoca.soma.services.services.UsersService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.web.bind.annotation.*;
-
-import com.edumoca.soma.services.services.UsersService;
-
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.AllArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.Objects;
 
 @RestController
 @RequestMapping(value = "/users")

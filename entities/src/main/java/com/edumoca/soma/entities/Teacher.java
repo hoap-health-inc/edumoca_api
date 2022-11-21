@@ -1,11 +1,11 @@
 package com.edumoca.soma.entities;
 
+import lombok.Data;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-
-import lombok.Data;
 
 @Entity
 @DiscriminatorValue(value = "TEACHER")

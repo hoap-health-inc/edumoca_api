@@ -1,6 +1,5 @@
 package com.edumoca.soma.services.services;
 
-import com.edumoca.soma.entities.Book;
 import com.edumoca.soma.services.beans.LoadFile;
 import com.mongodb.DBObject;
 import org.springframework.web.multipart.MultipartFile;

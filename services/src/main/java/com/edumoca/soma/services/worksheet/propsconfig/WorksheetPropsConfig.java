@@ -22,7 +22,9 @@ public class WorksheetPropsConfig {
 	private String publications;
 	private String books;
 	private String chapters;
+	private String bookChapterMap;
 	private String topics;
+	private String bookChapterTopicMap;
 	private String teachers;
 	private String homeRoomTeachers;
 	private String subjectHead;

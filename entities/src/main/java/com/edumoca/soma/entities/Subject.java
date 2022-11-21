@@ -1,8 +1,8 @@
 package com.edumoca.soma.entities;
 
-import javax.persistence.*;
-
 import lombok.Data;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "SUBJECT",uniqueConstraints = {@UniqueConstraint(columnNames = {"SUBJECT_NAME","INST_ID"})})

@@ -1,22 +1,21 @@
 package com.edumoca.soma.services.services.impl;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 import com.edumoca.soma.entities.Institution;
+import com.edumoca.soma.entities.Role;
+import com.edumoca.soma.entities.dtos.RoleDto;
+import com.edumoca.soma.entities.exception.DataNotFoundException;
 import com.edumoca.soma.entities.models.RoleResponse;
-import com.edumoca.soma.entities.dtos.RoleDTO;
 import com.edumoca.soma.entities.repositories.InstitutionRepository;
+import com.edumoca.soma.entities.repositories.RoleRepository;
+import com.edumoca.soma.services.services.RoleService;
 import lombok.AllArgsConstructor;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import com.edumoca.soma.entities.Role;
-import com.edumoca.soma.entities.exception.DataNotFoundException;
-import com.edumoca.soma.entities.repositories.RoleRepository;
-import com.edumoca.soma.services.services.RoleService;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -28,33 +27,33 @@ public class RoleServiceImpl implements RoleService{
 	private final ModelMapper modelMapper;
 
 	@Override
-	public RoleDTO createRole(Role role) {
-		return modelMapper.map(roleRepository.save(role),RoleDTO.class);
+	public RoleDto createRole(Role role) {
+		return modelMapper.map(roleRepository.save(role), RoleDto.class);
 	}
 
 	@Override
-	public RoleDTO updateRole(Role role,Integer roleId) {
+	public RoleDto updateRole(Role role, Integer roleId) {
 		Optional<RoleResponse> role1 =  Optional.ofNullable(roleRepository.getRoleByAndRoleId(roleId));
 		if(role1.isPresent())
 			role.setRoleId(roleId);
-		return modelMapper.map(roleRepository.save(role),RoleDTO.class);
+		return modelMapper.map(roleRepository.save(role), RoleDto.class);
 
 	}
 	
 	@Override
-	public List<RoleDTO> getAllRolesByInstitution(Integer institutionId){
+	public List<RoleDto> getAllRolesByInstitution(Integer institutionId){
 		return roleRepository.getAllRolesByInstitutionId(institutionId).stream().map(r->{
-			RoleDTO roleDTO = new RoleDTO();
+			RoleDto roleDTO = new RoleDto();
 			BeanUtils.copyProperties(r,roleDTO);
 			return roleDTO;
 		}).collect(Collectors.toList());
 	}
 
 	@Override
-	public RoleDTO getRoleByInstitutionAndRole(Integer institutionId,Integer roleId) {
+	public RoleDto getRoleByInstitutionAndRole(Integer institutionId, Integer roleId) {
 		Optional<RoleResponse> quickRole = Optional.ofNullable(roleRepository.getRoleByInstitutionIdAndRoleId(institutionId, roleId));
 		if(quickRole.isPresent()) {
-			RoleDTO roleDTO = new RoleDTO();
+			RoleDto roleDTO = new RoleDto();
 			BeanUtils.copyProperties(quickRole.get(),roleDTO);
 			return roleDTO;
 		}else
@@ -62,9 +61,9 @@ public class RoleServiceImpl implements RoleService{
 	}
 
 	@Override
-	public Map<String, Set<RoleDTO>> loadRoles(XSSFSheet rolesSheet, String rolesSheetName) {
-		Map<String,Set<RoleDTO>> rolesMap = new HashMap<>();
-		Set<RoleDTO> rolesSet = new HashSet<>();
+	public Map<String, Set<RoleDto>> loadRoles(XSSFSheet rolesSheet, String rolesSheetName) {
+		Map<String,Set<RoleDto>> rolesMap = new HashMap<>();
+		Set<RoleDto> rolesSet = new HashSet<>();
 		rolesSheet.rowIterator().forEachRemaining(row->{
 			if(row.getRowNum()>0){
 				Role role = new Role();
@@ -72,7 +71,7 @@ public class RoleServiceImpl implements RoleService{
 				Optional<Institution> institution = institutionRepository.findById(new Double(row.getCell(1).getNumericCellValue()).intValue());
 				institution.ifPresent(role::setInstitution);
 				roleRepository.save(role);
-				RoleDTO roleDTO = new RoleDTO();
+				RoleDto roleDTO = new RoleDto();
 				roleDTO.setRoleId(role.getRoleId());
 				roleDTO.setRoleName(role.getRoleName());
 				rolesSet.add(roleDTO);

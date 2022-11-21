@@ -1,6 +1,6 @@
 package com.edumoca.soma.entities;
 
-import lombok.*;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -16,5 +16,5 @@ public class Institution extends BaseEntity{
     @Column(name = "INST_NAME",nullable = false)
     private String institutionName;
     @OneToMany(mappedBy = "institution")
-    Set<GradeSectionInstitutionMapping> gradeSectionInstitutionMappingSet = new HashSet<>();
+    Set<GradeSectionInstitutionMap> gradeSectionInstitutionMapSet = new HashSet<>();
 }

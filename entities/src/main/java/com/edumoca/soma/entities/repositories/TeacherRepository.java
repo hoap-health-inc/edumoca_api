@@ -1,13 +1,10 @@
 package com.edumoca.soma.entities.repositories;
 
+import com.edumoca.soma.entities.Teacher;
 import com.edumoca.soma.entities.models.TeacherResponse;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
-
-import com.edumoca.soma.entities.Teacher;
 import org.springframework.data.repository.query.Param;
-
-import java.util.List;
 
 public interface TeacherRepository extends PagingAndSortingRepository<Teacher, Integer>{
 

@@ -18,6 +18,4 @@ public class BookRequest implements Serializable {
     private SubjectIdRequest subjectIdRequest;
     private boolean hasDigitalCopy;
     private String bookFormat;
-    //private String bookLocation;
-    private InstitutionIdRequest institutionIdRequest;
 }

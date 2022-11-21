@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
         ,"com.edumoca.soma.services.*"
 })
 @EnableJpaRepositories("com.edumoca.soma.entities.*")
-@EnableMongoRepositories()
+@EnableMongoRepositories("com.edumoca.soma.entities.*")
 @EntityScan(value = {"com.edumoca.soma.entities"})
 @OpenAPIDefinition(
 		info = @Info(title = "Edumoca admin API"),

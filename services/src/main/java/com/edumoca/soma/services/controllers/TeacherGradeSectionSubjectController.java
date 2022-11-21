@@ -1,19 +1,10 @@
 package com.edumoca.soma.services.controllers;
 
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.edumoca.soma.entities.TeacherGradeSectionSubjectMapping;
+import com.edumoca.soma.entities.TeacherGradeSectionSubjectMap;
 import com.edumoca.soma.services.services.TeacherGradeSectionSubjectMappingService;
+import lombok.AllArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/teacherGradeSectionSubjectMapping")
@@ -23,17 +14,17 @@ public class TeacherGradeSectionSubjectController {
 	private final TeacherGradeSectionSubjectMappingService teacherGradeSectionSubjectMappingService;
 	
 	@PostMapping
-	public TeacherGradeSectionSubjectMapping createTeacherGradeSectionSubjectMapping(@RequestBody TeacherGradeSectionSubjectMapping teacherGradeSectionSubjectMapping) {
-		return teacherGradeSectionSubjectMappingService.createTeacherGradeSectionSubjectMapping(teacherGradeSectionSubjectMapping);
+	public TeacherGradeSectionSubjectMap createTeacherGradeSectionSubjectMapping(@RequestBody TeacherGradeSectionSubjectMap teacherGradeSectionSubjectMap) {
+		return teacherGradeSectionSubjectMappingService.createTeacherGradeSectionSubjectMapping(teacherGradeSectionSubjectMap);
 	}
 	
 	@PutMapping
-	public TeacherGradeSectionSubjectMapping updateTeacherGradeSectionSubjectMapping(@RequestBody TeacherGradeSectionSubjectMapping teacherGradeSectionSubjectMapping) {
-		return teacherGradeSectionSubjectMappingService.createTeacherGradeSectionSubjectMapping(teacherGradeSectionSubjectMapping);
+	public TeacherGradeSectionSubjectMap updateTeacherGradeSectionSubjectMapping(@RequestBody TeacherGradeSectionSubjectMap teacherGradeSectionSubjectMap) {
+		return teacherGradeSectionSubjectMappingService.createTeacherGradeSectionSubjectMapping(teacherGradeSectionSubjectMap);
 	}
 	
 	@GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-	public TeacherGradeSectionSubjectMapping getTeacherGradeSectionSubjectMapping(@PathVariable("id") Integer teacherGradeSectionSubjectMappingId) {
+	public TeacherGradeSectionSubjectMap getTeacherGradeSectionSubjectMapping(@PathVariable("id") Integer teacherGradeSectionSubjectMappingId) {
 		return teacherGradeSectionSubjectMappingService.getTeacherGradeSectionSubjectMappingById(teacherGradeSectionSubjectMappingId);
 	}
 }

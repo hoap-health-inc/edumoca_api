@@ -1,13 +1,12 @@
 package com.edumoca.soma.entities;
 
-import java.util.HashSet;
-import java.util.Set;
+import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-
-import lombok.Data;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity

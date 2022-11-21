@@ -1,11 +1,14 @@
 package com.edumoca.soma.services.services.impl;
 
-import com.edumoca.soma.entities.*;
-import com.edumoca.soma.entities.dtos.GradeSectionInstitutionMappingDTO;
+import com.edumoca.soma.entities.Grade;
+import com.edumoca.soma.entities.GradeSectionInstitutionMap;
+import com.edumoca.soma.entities.Institution;
+import com.edumoca.soma.entities.Section;
+import com.edumoca.soma.entities.dtos.GradeSectionInstitutionMapDto;
 import com.edumoca.soma.entities.exception.DataNotFoundException;
-import com.edumoca.soma.entities.models.GradeSectionInstitutionMappingResponse;
+import com.edumoca.soma.entities.models.GradeSectionInstitutionMapResponse;
 import com.edumoca.soma.entities.repositories.GradeRepository;
-import com.edumoca.soma.entities.repositories.GradeSectionInstitutionMappingRepository;
+import com.edumoca.soma.entities.repositories.GradeSectionInstitutionMapRepository;
 import com.edumoca.soma.entities.repositories.InstitutionRepository;
 import com.edumoca.soma.entities.repositories.SectionRepository;
 import com.edumoca.soma.services.services.GradeSectionInstitutionMappingService;
@@ -20,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class GradeSectionInstitutionMappingServiceImpl implements GradeSectionInstitutionMappingService {
-    private final GradeSectionInstitutionMappingRepository gradeSectionInstitutionMappingRepository;
+    private final GradeSectionInstitutionMapRepository gradeSectionInstitutionMappingRepository;
 	private final GradeRepository gradeRepository;
 	private final SectionRepository sectionRepository;
 	private final InstitutionRepository institutionRepository;
@@ -28,51 +31,51 @@ public class GradeSectionInstitutionMappingServiceImpl implements GradeSectionIn
 
 
 	@Override
-	public GradeSectionInstitutionMappingDTO createGradeSectionInstitutionMapping(GradeSectionInstitutionMapping gradeSectionInstitutionMapping) {
-		return modelMapper.map(gradeSectionInstitutionMappingRepository.save(gradeSectionInstitutionMapping), GradeSectionInstitutionMappingDTO.class);
+	public GradeSectionInstitutionMapDto createGradeSectionInstitutionMapping(GradeSectionInstitutionMap gradeSectionInstitutionMap) {
+		return modelMapper.map(gradeSectionInstitutionMappingRepository.save(gradeSectionInstitutionMap), GradeSectionInstitutionMapDto.class);
 	}
 
 	@Override
-	public GradeSectionInstitutionMappingDTO updateGradeSectionInstitutionMapping(GradeSectionInstitutionMapping gradeSectionInstitutionMapping,Integer gradeSectionInstitutionMappingId) {
-        Optional<GradeSectionInstitutionMappingResponse> gradeSectionInstitutionMappingResponse1 = Optional.ofNullable(gradeSectionInstitutionMappingRepository.getGradeSectionInstitutionMappingByGradeSectionInstitutionMappingId(gradeSectionInstitutionMappingId));
+	public GradeSectionInstitutionMapDto updateGradeSectionInstitutionMapping(GradeSectionInstitutionMap gradeSectionInstitutionMap, Integer gradeSectionInstitutionMappingId) {
+        Optional<GradeSectionInstitutionMapResponse> gradeSectionInstitutionMappingResponse1 = Optional.ofNullable(gradeSectionInstitutionMappingRepository.getGradeSectionInstitutionMappingByGradeSectionInstitutionMappingId(gradeSectionInstitutionMappingId));
 		if(gradeSectionInstitutionMappingResponse1.isPresent())
-			gradeSectionInstitutionMapping.setGradeSectionInstitutionMappingId(gradeSectionInstitutionMappingId);
-		return modelMapper.map(gradeSectionInstitutionMappingRepository.save(gradeSectionInstitutionMapping),GradeSectionInstitutionMappingDTO.class);
+			gradeSectionInstitutionMap.setGradeSectionInstitutionMappingId(gradeSectionInstitutionMappingId);
+		return modelMapper.map(gradeSectionInstitutionMappingRepository.save(gradeSectionInstitutionMap), GradeSectionInstitutionMapDto.class);
 
 	}
 
 	@Override
-	public List<GradeSectionInstitutionMappingDTO> getAllGradeSectionInstitutionMappingByInstitution(Integer institutionId) {
+	public List<GradeSectionInstitutionMapDto> getAllGradeSectionInstitutionMappingByInstitution(Integer institutionId) {
 		return gradeSectionInstitutionMappingRepository.getAllGradeSectionInstitutionMappingByInstitutionId(institutionId).stream().map(e->{
-			return modelMapper.map(e,GradeSectionInstitutionMappingDTO.class);
+			return modelMapper.map(e, GradeSectionInstitutionMapDto.class);
 		}).collect(Collectors.toList());
 	}
 
 	@Override
-	public GradeSectionInstitutionMappingDTO getGradeSectionInstitutionMappingByInstitutionAndGradeSectionInstitutionMappingId(Integer institutionId, Integer gradeSectionInstitutionMappingId) {
-		Optional<GradeSectionInstitutionMappingResponse> quickGradeSectionInstitutionMapping = Optional.ofNullable(gradeSectionInstitutionMappingRepository.getGradeSectionInstitutionMappingByInstitutionIdAndGradeSectionInstitutionMappingId(institutionId, gradeSectionInstitutionMappingId));
+	public GradeSectionInstitutionMapDto getGradeSectionInstitutionMappingByInstitutionAndGradeSectionInstitutionMappingId(Integer institutionId, Integer gradeSectionInstitutionMappingId) {
+		Optional<GradeSectionInstitutionMapResponse> quickGradeSectionInstitutionMapping = Optional.ofNullable(gradeSectionInstitutionMappingRepository.getGradeSectionInstitutionMappingByInstitutionIdAndGradeSectionInstitutionMappingId(institutionId, gradeSectionInstitutionMappingId));
 		if(quickGradeSectionInstitutionMapping.isPresent()){
-			return modelMapper.map(quickGradeSectionInstitutionMapping.get(),GradeSectionInstitutionMappingDTO.class);
+			return modelMapper.map(quickGradeSectionInstitutionMapping.get(), GradeSectionInstitutionMapDto.class);
 		}else
 			throw new DataNotFoundException("GradeSectionInstitutionMapping with id not found");
 	}
 
 	@Override
-	public Map<String, Set<GradeSectionInstitutionMappingDTO>> loadGradeSectionInstitutionMapping(XSSFSheet gradeSectionInstitutionMappingSheet, String gradeSectionInstitutionMappingSheetName) {
-		Map<String,Set<GradeSectionInstitutionMappingDTO>> gradeSectionInstitutionMappingMap = new HashMap<>();
-		Set<GradeSectionInstitutionMappingDTO> gradeSectionInstitutionMappingSet = new HashSet<>();
+	public Map<String, Set<GradeSectionInstitutionMapDto>> loadGradeSectionInstitutionMapping(XSSFSheet gradeSectionInstitutionMappingSheet, String gradeSectionInstitutionMappingSheetName) {
+		Map<String,Set<GradeSectionInstitutionMapDto>> gradeSectionInstitutionMappingMap = new HashMap<>();
+		Set<GradeSectionInstitutionMapDto> gradeSectionInstitutionMappingSet = new HashSet<>();
 		gradeSectionInstitutionMappingSheet.rowIterator().forEachRemaining(row->{
 			if(row.getRowNum()>0){
-				GradeSectionInstitutionMapping gradeSectionInstitutionMapping = new GradeSectionInstitutionMapping();
+				GradeSectionInstitutionMap gradeSectionInstitutionMap = new GradeSectionInstitutionMap();
 				Optional<Grade> grade = gradeRepository.findById(new Double(row.getCell(0).getNumericCellValue()).intValue());
-				grade.ifPresent(gradeSectionInstitutionMapping::setGrade);
+				grade.ifPresent(gradeSectionInstitutionMap::setGrade);
 				Optional<Section> section = sectionRepository.findById(new Double(row.getCell(1).getNumericCellValue()).intValue());
-				section.ifPresent(gradeSectionInstitutionMapping::setSection);
+				section.ifPresent(gradeSectionInstitutionMap::setSection);
 				Optional<Institution> institution = institutionRepository.findById(new Double(row.getCell(2).getNumericCellValue()).intValue());
-				institution.ifPresent(gradeSectionInstitutionMapping::setInstitution);
-				gradeSectionInstitutionMappingRepository.save(gradeSectionInstitutionMapping);
-				GradeSectionInstitutionMappingDTO gradeSectionInstitutionMappingDTO = new GradeSectionInstitutionMappingDTO();
-				gradeSectionInstitutionMappingDTO.setGradeSectionInstitutionMappingId(gradeSectionInstitutionMapping.getGradeSectionInstitutionMappingId());
+				institution.ifPresent(gradeSectionInstitutionMap::setInstitution);
+				gradeSectionInstitutionMappingRepository.save(gradeSectionInstitutionMap);
+				GradeSectionInstitutionMapDto gradeSectionInstitutionMappingDTO = new GradeSectionInstitutionMapDto();
+				gradeSectionInstitutionMappingDTO.setGradeSectionInstitutionMappingId(gradeSectionInstitutionMap.getGradeSectionInstitutionMappingId());
 				//gradeSectionInstitutionMappingDTO.setGradeName(gradeSectionInstitutionMapping.getGrade().getGradeName());
 				//gradeSectionInstitutionMappingDTO.setSectionName(gradeSectionInstitutionMapping.getSection().getSectionName());
 				//gradeSectionInstitutionMappingDTO.setInstitutionName(gradeSectionInstitutionMapping.getInstitution().getInstitutionName());

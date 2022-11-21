@@ -1,15 +1,15 @@
 package com.edumoca.soma.services.services;
 
-import com.edumoca.soma.entities.TeacherGradeSectionSubjectMapping;
-import com.edumoca.soma.entities.dtos.TeacherGradeSectionSubjectMappingDTO;
+import com.edumoca.soma.entities.TeacherGradeSectionSubjectMap;
+import com.edumoca.soma.entities.dtos.TeacherGradeSectionSubjectMapDto;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import java.util.Map;
 import java.util.Set;
 
 public interface TeacherGradeSectionSubjectMappingService {
-	TeacherGradeSectionSubjectMapping createTeacherGradeSectionSubjectMapping(TeacherGradeSectionSubjectMapping teacherGradeSectionSubjectMapping);
-	TeacherGradeSectionSubjectMapping updateTeacherGradeSectionSubjectMapping(TeacherGradeSectionSubjectMapping teacherGradeSectionSubjectMapping);
-	TeacherGradeSectionSubjectMapping getTeacherGradeSectionSubjectMappingById(Integer teacherGradeSectionSubjectMappingId);
-	Map<String, Set<TeacherGradeSectionSubjectMappingDTO>> loadTeacherGradeSectionSubjectMappings(XSSFSheet teacherGradeSectionSubjectMappingsSheet, String teacherGradeSectionSubjectMappingsSheetName);
+	TeacherGradeSectionSubjectMap createTeacherGradeSectionSubjectMapping(TeacherGradeSectionSubjectMap teacherGradeSectionSubjectMap);
+	TeacherGradeSectionSubjectMap updateTeacherGradeSectionSubjectMapping(TeacherGradeSectionSubjectMap teacherGradeSectionSubjectMap);
+	TeacherGradeSectionSubjectMap getTeacherGradeSectionSubjectMappingById(Integer teacherGradeSectionSubjectMappingId);
+	Map<String, Set<TeacherGradeSectionSubjectMapDto>> loadTeacherGradeSectionSubjectMappings(XSSFSheet teacherGradeSectionSubjectMappingsSheet, String teacherGradeSectionSubjectMappingsSheetName);
 }

@@ -1,13 +1,11 @@
 package com.edumoca.soma.entities;
 
-import java.util.Set;
+import lombok.Data;
 
 import javax.persistence.*;
 
-import lombok.Data;
-
 @Entity
-@Table(name = "CHAPTERS",uniqueConstraints = {@UniqueConstraint(columnNames = {"CHAPTER_NAME","BOOK_ID"})})
+@Table(name = "CHAPTERS",uniqueConstraints = {@UniqueConstraint(columnNames = {"CHAPTER_NAME"})})
 @Data
 public class Chapter extends BaseEntity{
     @Id
@@ -16,7 +14,4 @@ public class Chapter extends BaseEntity{
     private int chapterId;
     @Column(name = "CHAPTER_NAME")
     private String name;
-    @ManyToOne
-    @JoinColumn(name = "BOOK_ID",referencedColumnName = "BOOK_ID")
-    private Book book;
 }

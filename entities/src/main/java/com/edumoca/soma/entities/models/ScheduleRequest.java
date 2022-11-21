@@ -20,6 +20,6 @@ public class ScheduleRequest implements Serializable {
     private Set<DayOfWeek> dayOfWeeks;
     private boolean recurring;
     private boolean fullDay;//HOLIDAY
-    private GradeSectionInstitutionYearMappingIdRequest gradeSectionInstitutionYearMappingIdRequest;
-    private TeacherGradeSectionSubjectMappingIdRequest teacherGradeSectionSubjectMappingIdRequest;
+    private GradeSectionInstitutionYearMapIdRequest gradeSectionInstitutionYearMappingIdRequest;
+    private TeacherGradeSectionSubjectMapIdRequest teacherGradeSectionSubjectMappingIdRequest;
 }

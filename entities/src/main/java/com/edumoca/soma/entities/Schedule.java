@@ -1,32 +1,15 @@
 package com.edumoca.soma.entities;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import lombok.Data;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
-
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
-import lombok.Data;
 
 @Entity
 @Data
@@ -62,10 +45,10 @@ public class Schedule extends BaseEntity implements Serializable{
     private boolean fullDay;//HOLIDAY
     @ManyToOne
     @JoinColumn(name = "GRADE_SECTION_INSTITUTION_YEAR_MAP_ID")
-    private GradeSectionInstitutionYearMapping gradeSectionInstitutionYearMapping;
+    private GradeSectionInstitutionYearMap gradeSectionInstitutionYearMap;
     @OneToOne
     @JoinColumn(name = "TEACHER_GRADE_SECTION_SUBJECT_MAPPING_ID")//,nullable = false
-    private TeacherGradeSectionSubjectMapping teacherGradeSectionSubjectMapping;
+    private TeacherGradeSectionSubjectMap teacherGradeSectionSubjectMap;
     
 //  @Column(name = "SCHEDULE_DURATION")
 //  private Duration scheduleDuration;
