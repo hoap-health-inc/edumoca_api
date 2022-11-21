@@ -1,34 +1,33 @@
 package com.edumoca.soma.services.services.impl;
 
-import java.util.*;
-
-import com.edumoca.soma.entities.GradeSectionInstitutionYearMapping;
+import com.edumoca.soma.entities.GradeSectionInstitutionYearMap;
 import com.edumoca.soma.entities.Subject;
 import com.edumoca.soma.entities.Teacher;
-import com.edumoca.soma.entities.dtos.TeacherGradeSectionSubjectMappingDTO;
-import com.edumoca.soma.entities.repositories.GradeSectionInstitutionYearMappingRepository;
+import com.edumoca.soma.entities.TeacherGradeSectionSubjectMap;
+import com.edumoca.soma.entities.dtos.TeacherGradeSectionSubjectMapDto;
+import com.edumoca.soma.entities.exception.DataNotFoundException;
+import com.edumoca.soma.entities.repositories.GradeSectionInstitutionYearMapRepository;
 import com.edumoca.soma.entities.repositories.SubjectRepository;
+import com.edumoca.soma.entities.repositories.TeacherGradeSectionSubjectMapRepository;
 import com.edumoca.soma.entities.repositories.TeacherRepository;
+import com.edumoca.soma.services.services.TeacherGradeSectionSubjectMappingService;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.edumoca.soma.entities.TeacherGradeSectionSubjectMapping;
-import com.edumoca.soma.entities.exception.DataNotFoundException;
-import com.edumoca.soma.entities.repositories.TeacherGradeSectionSubjectMappingRepository;
-import com.edumoca.soma.services.services.TeacherGradeSectionSubjectMappingService;
+import java.util.*;
 
 @Service
 public class TeacherGradeSectionSubjectMappingServiceImpl implements TeacherGradeSectionSubjectMappingService{
 
 
-	private final TeacherGradeSectionSubjectMappingRepository teacherGradeSectionSubjectMappingRepository;
+	private final TeacherGradeSectionSubjectMapRepository teacherGradeSectionSubjectMappingRepository;
 	private final TeacherRepository teacherRepository;
-	private final GradeSectionInstitutionYearMappingRepository gradeSectionInstitutionYearMappingRepository;
+	private final GradeSectionInstitutionYearMapRepository gradeSectionInstitutionYearMappingRepository;
 	private final SubjectRepository subjectRepository;
 
 	@Autowired
-	public TeacherGradeSectionSubjectMappingServiceImpl(TeacherGradeSectionSubjectMappingRepository teacherGradeSectionSubjectMappingRepository, TeacherRepository teacherRepository, GradeSectionInstitutionYearMappingRepository gradeSectionInstitutionYearMappingRepository, SubjectRepository subjectRepository) {
+	public TeacherGradeSectionSubjectMappingServiceImpl(TeacherGradeSectionSubjectMapRepository teacherGradeSectionSubjectMappingRepository, TeacherRepository teacherRepository, GradeSectionInstitutionYearMapRepository gradeSectionInstitutionYearMappingRepository, SubjectRepository subjectRepository) {
 		this.teacherGradeSectionSubjectMappingRepository = teacherGradeSectionSubjectMappingRepository;
 		this.teacherRepository = teacherRepository;
 		this.gradeSectionInstitutionYearMappingRepository = gradeSectionInstitutionYearMappingRepository;
@@ -36,21 +35,21 @@ public class TeacherGradeSectionSubjectMappingServiceImpl implements TeacherGrad
 	}
 
 	@Override
-	public TeacherGradeSectionSubjectMapping createTeacherGradeSectionSubjectMapping(
-			TeacherGradeSectionSubjectMapping teacherGradeSectionSubjectMapping) {
-		return teacherGradeSectionSubjectMappingRepository.save(teacherGradeSectionSubjectMapping);
+	public TeacherGradeSectionSubjectMap createTeacherGradeSectionSubjectMapping(
+			TeacherGradeSectionSubjectMap teacherGradeSectionSubjectMap) {
+		return teacherGradeSectionSubjectMappingRepository.save(teacherGradeSectionSubjectMap);
 	}
 
 	@Override
-	public TeacherGradeSectionSubjectMapping updateTeacherGradeSectionSubjectMapping(
-			TeacherGradeSectionSubjectMapping teacherGradeSectionSubjectMapping) {
-		return teacherGradeSectionSubjectMappingRepository.save(teacherGradeSectionSubjectMapping);
+	public TeacherGradeSectionSubjectMap updateTeacherGradeSectionSubjectMapping(
+			TeacherGradeSectionSubjectMap teacherGradeSectionSubjectMap) {
+		return teacherGradeSectionSubjectMappingRepository.save(teacherGradeSectionSubjectMap);
 	}
 
 	@Override
-	public TeacherGradeSectionSubjectMapping getTeacherGradeSectionSubjectMappingById(
+	public TeacherGradeSectionSubjectMap getTeacherGradeSectionSubjectMappingById(
 			Integer teacherGradeSectionSubjectMappingId) {
-		Optional<TeacherGradeSectionSubjectMapping> teacherGradeSectionSubjectMapping = teacherGradeSectionSubjectMappingRepository.findById(teacherGradeSectionSubjectMappingId);
+		Optional<TeacherGradeSectionSubjectMap> teacherGradeSectionSubjectMapping = teacherGradeSectionSubjectMappingRepository.findById(teacherGradeSectionSubjectMappingId);
 		if(teacherGradeSectionSubjectMapping.isPresent())
 			return teacherGradeSectionSubjectMapping.get();
 		else
@@ -58,26 +57,26 @@ public class TeacherGradeSectionSubjectMappingServiceImpl implements TeacherGrad
 	}
 
 	@Override
-	public Map<String, Set<TeacherGradeSectionSubjectMappingDTO>> loadTeacherGradeSectionSubjectMappings(XSSFSheet teacherGradeSectionSubjectMappingsSheet, String teacherGradeSectionSubjectMappingsSheetName) {
-		Map<String, Set<TeacherGradeSectionSubjectMappingDTO>> teacherGradeSectionSubjectMappingsMap = new HashMap<>();
-		Set<TeacherGradeSectionSubjectMappingDTO> teacherGradeSectionSubjectMappingsSet = new HashSet<>();
+	public Map<String, Set<TeacherGradeSectionSubjectMapDto>> loadTeacherGradeSectionSubjectMappings(XSSFSheet teacherGradeSectionSubjectMappingsSheet, String teacherGradeSectionSubjectMappingsSheetName) {
+		Map<String, Set<TeacherGradeSectionSubjectMapDto>> teacherGradeSectionSubjectMappingsMap = new HashMap<>();
+		Set<TeacherGradeSectionSubjectMapDto> teacherGradeSectionSubjectMappingsSet = new HashSet<>();
 		teacherGradeSectionSubjectMappingsSheet.rowIterator().forEachRemaining(row->{
 			if(row.getRowNum()>0){
-				TeacherGradeSectionSubjectMapping teacherGradeSectionSubjectMapping = new TeacherGradeSectionSubjectMapping();
+				TeacherGradeSectionSubjectMap teacherGradeSectionSubjectMap = new TeacherGradeSectionSubjectMap();
 				Optional<Teacher> teacher = teacherRepository.findById(new Double(row.getCell(0).getNumericCellValue()).intValue());
-				teacher.ifPresent(teacherGradeSectionSubjectMapping::setTeacher);
-				Optional<GradeSectionInstitutionYearMapping> gradeSectionInstitutionYearMapping = gradeSectionInstitutionYearMappingRepository.findById(new Double(row.getCell(1).getNumericCellValue()).intValue());
-				gradeSectionInstitutionYearMapping.ifPresent(teacherGradeSectionSubjectMapping::setGradeSectionInstitutionYearMapping);
+				teacher.ifPresent(teacherGradeSectionSubjectMap::setTeacher);
+				Optional<GradeSectionInstitutionYearMap> gradeSectionInstitutionYearMapping = gradeSectionInstitutionYearMappingRepository.findById(new Double(row.getCell(1).getNumericCellValue()).intValue());
+				gradeSectionInstitutionYearMapping.ifPresent(teacherGradeSectionSubjectMap::setGradeSectionInstitutionYearMap);
 				Optional<Subject> subject = subjectRepository.findById(new Double(row.getCell(2).getNumericCellValue()).intValue());
-				subject.ifPresent(teacherGradeSectionSubjectMapping::setSubject);
-				teacherGradeSectionSubjectMappingRepository.save(teacherGradeSectionSubjectMapping);
-				TeacherGradeSectionSubjectMappingDTO teacherGradeSectionSubjectMappingDTO = new TeacherGradeSectionSubjectMappingDTO();
-				teacherGradeSectionSubjectMappingDTO.setTeacherGradeSectionSubjectMappingId(teacherGradeSectionSubjectMapping.getTeacherGradeSectionSubjectMappingId());
-				teacherGradeSectionSubjectMappingDTO.setTeacherId(teacherGradeSectionSubjectMapping.getTeacher().getUserId());
-				teacherGradeSectionSubjectMappingDTO.setTeacherName(teacherGradeSectionSubjectMapping.getTeacher().getFullName());
-				teacherGradeSectionSubjectMappingDTO.setSubjectId(teacherGradeSectionSubjectMapping.getSubject().getSubjectId());
-				teacherGradeSectionSubjectMappingDTO.setSubjectName(teacherGradeSectionSubjectMapping.getSubject().getSubjectName());
-				teacherGradeSectionSubjectMappingsSet.add(teacherGradeSectionSubjectMappingDTO);
+				subject.ifPresent(teacherGradeSectionSubjectMap::setSubject);
+				teacherGradeSectionSubjectMappingRepository.save(teacherGradeSectionSubjectMap);
+				TeacherGradeSectionSubjectMapDto teacherGradeSectionSubjectMappingDto = new TeacherGradeSectionSubjectMapDto();
+				teacherGradeSectionSubjectMappingDto.setTeacherGradeSectionSubjectMappingId(teacherGradeSectionSubjectMap.getTeacherGradeSectionSubjectMappingId());
+				teacherGradeSectionSubjectMappingDto.setTeacherId(teacherGradeSectionSubjectMap.getTeacher().getUserId());
+				teacherGradeSectionSubjectMappingDto.setTeacherName(teacherGradeSectionSubjectMap.getTeacher().getFullName());
+				teacherGradeSectionSubjectMappingDto.setSubjectId(teacherGradeSectionSubjectMap.getSubject().getSubjectId());
+				teacherGradeSectionSubjectMappingDto.setSubjectName(teacherGradeSectionSubjectMap.getSubject().getSubjectName());
+				teacherGradeSectionSubjectMappingsSet.add(teacherGradeSectionSubjectMappingDto);
 			}
 		});
 		teacherGradeSectionSubjectMappingsMap.put(teacherGradeSectionSubjectMappingsSheetName,teacherGradeSectionSubjectMappingsSet);

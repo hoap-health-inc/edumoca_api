@@ -1,11 +1,11 @@
 package com.edumoca.soma.services.services;
 
 import com.edumoca.soma.entities.*;
-import com.edumoca.soma.entities.dtos.ParentDTO;
-import com.edumoca.soma.entities.dtos.StudentDTO;
-import com.edumoca.soma.entities.dtos.TeacherDTO;
+import com.edumoca.soma.entities.dtos.AdminDto;
+import com.edumoca.soma.entities.dtos.ParentDto;
+import com.edumoca.soma.entities.dtos.StudentDto;
+import com.edumoca.soma.entities.dtos.TeacherDto;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.IOException;
 import java.util.Map;
@@ -22,27 +22,27 @@ public interface UsersService {
     
     Student getStudentById(Integer studentId);
 
-    Map<String, Set<StudentDTO>> loadStudents(XSSFSheet studentsSheet,String studentsSheetName);
+    Map<String, Set<StudentDto>> loadStudents(XSSFSheet studentsSheet, String studentsSheetName);
 
-    Map<String, Set<TeacherDTO>> loadTeachers(XSSFSheet teachersSheet,String teachersSheetName,Class<?> classType);
+    Map<String, Set<TeacherDto>> loadTeachers(XSSFSheet teachersSheet, String teachersSheetName, Class<?> classType);
 
-    Map<String,Set<ParentDTO>> loadParents(XSSFSheet parentsSheet,String parentsSheetName);
+    Map<String,Set<ParentDto>> loadParents(XSSFSheet parentsSheet, String parentsSheetName);
 
 
-    StudentDTO showStudentDetails(String userName) throws IOException;
+    StudentDto showStudentDetails(String userName) throws IOException;
 
-    TeacherDTO showTeacherDetails(String userName) throws IOException;
+    TeacherDto showTeacherDetails(String userName) throws IOException;
 
-    TeacherDTO showSubjectHeadDetails(String userName) throws IOException;
+    TeacherDto showSubjectHeadDetails(String userName) throws IOException;
 
-    TeacherDTO showHomeRoomDetails(String userName) throws IOException;
+    TeacherDto showHomeRoomDetails(String userName) throws IOException;
 
-    public TeacherDTO showSchoolAdminByLoginId(String userName) throws IOException;
+    public AdminDto showSchoolAdminByLoginId(String userName) throws IOException;
 
-    public TeacherDTO showSuperAdminByLoginId(String userName) throws IOException;
+    public AdminDto showSuperAdminByLoginId(String userName) throws IOException;
 
-    public ParentDTO showParentByLoginId(String userName) throws IOException;
+    public ParentDto showParentByLoginId(String userName) throws IOException;
 
-    public TeacherDTO showPrincipalByLoginId(String userName) throws IOException;
+    public TeacherDto showPrincipalByLoginId(String userName) throws IOException;
 
 }

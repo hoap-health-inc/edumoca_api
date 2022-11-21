@@ -21,7 +21,7 @@ public class StudentRequest implements Serializable {
     private String presentAddress;
     private String permanentAddress;
     private RoleIdRequest roleIdRequest;
-    private GradeSectionInstitutionYearMappingIdRequest gradeSectionInstitutionYearMappingIdRequest;
+    private GradeSectionInstitutionYearMapIdRequest gradeSectionInstitutionYearMappingIdRequest;
     private LocalDate dateOfBirth;
     private String lrn;
     private String psaRegNumber;

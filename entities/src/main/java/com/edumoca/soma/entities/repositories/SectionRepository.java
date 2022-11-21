@@ -1,10 +1,9 @@
 package com.edumoca.soma.entities.repositories;
 
+import com.edumoca.soma.entities.Section;
 import com.edumoca.soma.entities.models.SectionResponse;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
-
-import com.edumoca.soma.entities.Section;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;

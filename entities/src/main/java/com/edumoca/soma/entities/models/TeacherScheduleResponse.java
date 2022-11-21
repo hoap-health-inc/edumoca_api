@@ -6,8 +6,6 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
-import java.time.DayOfWeek;
-import java.util.Set;
 
 @AllArgsConstructor
 @Getter

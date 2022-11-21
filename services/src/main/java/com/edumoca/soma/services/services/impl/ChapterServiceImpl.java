@@ -1,19 +1,24 @@
 package com.edumoca.soma.services.services.impl;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import com.edumoca.soma.entities.models.ChapterResponse;
-import com.edumoca.soma.entities.dtos.ChapterDTO;
-import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Service;
-
+import com.edumoca.soma.entities.Book;
 import com.edumoca.soma.entities.Chapter;
+import com.edumoca.soma.entities.GradeSectionInstitutionMap;
+import com.edumoca.soma.entities.Subject;
+import com.edumoca.soma.entities.dtos.BookDto;
+import com.edumoca.soma.entities.dtos.ChapterDto;
 import com.edumoca.soma.entities.exception.DataNotFoundException;
+import com.edumoca.soma.entities.models.ChapterResponse;
 import com.edumoca.soma.entities.repositories.ChapterRepository;
 import com.edumoca.soma.entities.repositories.TopicRepository;
 import com.edumoca.soma.services.services.ChapterService;
+import lombok.AllArgsConstructor;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -23,55 +28,42 @@ public class ChapterServiceImpl implements ChapterService{
 	private final TopicRepository topicRepository;
  	private final ModelMapper modelMapper;
 	@Override
-	public ChapterDTO createChapter(Chapter chapter) {
-		return modelMapper.map(chapterRepository.save(chapter),ChapterDTO.class);
+	public ChapterDto createChapter(Chapter chapter) {
+		return modelMapper.map(chapterRepository.save(chapter), ChapterDto.class);
 	}
 
 	@Override
-	public ChapterDTO updateChapter(Chapter chapter,Integer chapterId) {
+	public ChapterDto updateChapter(Chapter chapter, Integer chapterId) {
 		Optional<ChapterResponse> chapterResponse = Optional.ofNullable(chapterRepository.getChapterByChapterId(chapterId));
 		if(chapterResponse.isPresent())
 			chapter.setChapterId(chapterId);
-		return modelMapper.map(chapterRepository.save(chapter),ChapterDTO.class);
+		return modelMapper.map(chapterRepository.save(chapter), ChapterDto.class);
 	}
 
 	@Override
-	public List<ChapterDTO> getAllChaptersByBook(Integer chapterId){
-		return chapterRepository.getAllChaptersByBookId(chapterId).stream().map(ch->{
-			return modelMapper.map(ch,ChapterDTO.class);
+	public List<ChapterDto> getChapterListByBookId(Integer chapterId){
+		return chapterRepository.getChapterListByBookId(chapterId).stream().map(ch->{
+			return modelMapper.map(ch, ChapterDto.class);
 		}).collect(Collectors.toList());
 	}
 
 	@Override
-	public ChapterDTO getChapterByBookAndChapter(Integer bookId,Integer chapterId) {
-		Optional<ChapterResponse> chapterResponse = Optional.ofNullable(chapterRepository.getChapterByBookIdAndChapterId(bookId, chapterId));
-		if(chapterResponse.isPresent()) {
-			return modelMapper.map(chapterResponse.get(),ChapterDTO.class);
-		}else
-			throw new DataNotFoundException("Chapter with id not found.");
+	public Map<String, Set<ChapterDto>> loadChapter(XSSFSheet chaptersSheet, String chaptersSheetName) {
+		Map<String,Set<ChapterDto>> chapterMap = new HashMap<>();
+		Set<ChapterDto> chapterSet = new HashSet<>();
+		chaptersSheet.rowIterator().forEachRemaining(row->{
+			if(row.getRowNum()>0){
+					Chapter chapter = new Chapter();
+					chapter.setName(row.getCell(0).getStringCellValue());
+					chapterRepository.save(chapter);
+					ChapterDto chapterDto = new ChapterDto();
+					chapterDto.setChapterId(chapter.getChapterId());
+					chapterDto.setChapterName(chapter.getName());
+					chapterSet.add(chapterDto);
+			}
+		});
+		chapterMap.put(chaptersSheetName,chapterSet);
+		return chapterMap;
 	}
 
-
-//	@Override
-//	public void loadChapterData(XSSFSheet chapterSheet) {
-//		chapterSheet.rowIterator().forEachRemaining(row -> {
-//            if (row.getRowNum() != 0) {
-//               Chapter chapter = new Chapter();
-//               chapter.setName(row.getCell(0).getStringCellValue());
-//               String topics[] = {};
-//               if(row.getCell(1).getStringCellValue().contains("@@")) {
-//                  topics = row.getCell(1).getStringCellValue().split("@@");
-//               }else {
-//            	   topics = new String[] {row.getCell(1).getStringCellValue()};
-//               }
-//               Set<Topic> topicsSet = new HashSet<>();
-//               Arrays.stream(topics).forEach(topic->{
-//            	  Topic topicObj = topicRepository.findByNameIgnoreCase(topic.trim());
-//            	  topicsSet.add(topicObj);
-//               });
-//               chapter.setTopic(topicsSet);
-//               chapterRepository.save(chapter);
-//            }
-//        });
-//	}
 }

@@ -1,21 +1,20 @@
 package com.edumoca.soma.services.services.impl;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
+import com.edumoca.soma.entities.AcademicYear;
+import com.edumoca.soma.entities.Institution;
+import com.edumoca.soma.entities.dtos.AcademicYearDto;
+import com.edumoca.soma.entities.exception.DataNotFoundException;
 import com.edumoca.soma.entities.models.AcademicYearResponse;
-import com.edumoca.soma.entities.dtos.AcademicYearDTO;
+import com.edumoca.soma.entities.repositories.AcademicYearRepository;
 import com.edumoca.soma.entities.repositories.InstitutionRepository;
+import com.edumoca.soma.services.services.AcademicYearService;
 import lombok.AllArgsConstructor;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import com.edumoca.soma.entities.AcademicYear;
-import com.edumoca.soma.entities.Institution;
-import com.edumoca.soma.entities.exception.DataNotFoundException;
-import com.edumoca.soma.entities.repositories.AcademicYearRepository;
-import com.edumoca.soma.services.services.AcademicYearService;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -27,38 +26,38 @@ public class AcademicYearServiceImpl implements AcademicYearService{
 
 
 	@Override
-	public AcademicYearDTO createAcademicYear(AcademicYear academicYear) {
-		return modelMapper.map(academicYearRepository.save(academicYear),AcademicYearDTO.class);
+	public AcademicYearDto createAcademicYear(AcademicYear academicYear) {
+		return modelMapper.map(academicYearRepository.save(academicYear), AcademicYearDto.class);
 	}
 
 	@Override
-	public AcademicYearDTO updateAcademicYear(AcademicYear academicYear,Integer academicYearId) {
+	public AcademicYearDto updateAcademicYear(AcademicYear academicYear, Integer academicYearId) {
 		Optional<AcademicYearResponse> academicYear1 = Optional.ofNullable(academicYearRepository.getAcademicYearByAcademicYearId(academicYearId));
 		if(academicYear1.isPresent())
 			academicYear.setId(academicYearId);
-		return modelMapper.map(academicYearRepository.save(academicYear),AcademicYearDTO.class);
+		return modelMapper.map(academicYearRepository.save(academicYear), AcademicYearDto.class);
 	}
 
 	@Override
-	public List<AcademicYearDTO> getAcademicYearByInstitution(Integer institutionId) {
+	public List<AcademicYearDto> getAcademicYearByInstitution(Integer institutionId) {
 		return academicYearRepository.getAllAcademicYearByInstitutionId(institutionId).stream().map(e->{
-			return modelMapper.map(e,AcademicYearDTO.class);
+			return modelMapper.map(e, AcademicYearDto.class);
 		}).collect(Collectors.toList());
 	}
 
 	@Override
-	public AcademicYearDTO getAcademicYearByInstitutionAndAcademicYear(Integer institutionId, Integer academicYearId) {
+	public AcademicYearDto getAcademicYearByInstitutionAndAcademicYear(Integer institutionId, Integer academicYearId) {
 		Optional<AcademicYearResponse> academicYear = Optional.ofNullable(academicYearRepository.getAcademicYearByInstitutionIdAndAcademicYearId(institutionId, academicYearId));
 		if(academicYear.isPresent()){
-			return modelMapper.map(academicYear,AcademicYearDTO.class);
+			return modelMapper.map(academicYear, AcademicYearDto.class);
 		}else
 			throw new DataNotFoundException("AcademicYear with id not found");
 	}
 
 	@Override
-	public Map<String, Set<AcademicYearDTO>> loadAcademicYear(XSSFSheet academicYearSheet, String academicYearSheetName) {
-		Map<String,Set<AcademicYearDTO>> academicYearMap = new HashMap<>();
-        Set<AcademicYearDTO> academicYearSet = new HashSet<>();
+	public Map<String, Set<AcademicYearDto>> loadAcademicYear(XSSFSheet academicYearSheet, String academicYearSheetName) {
+		Map<String,Set<AcademicYearDto>> academicYearMap = new HashMap<>();
+        Set<AcademicYearDto> academicYearSet = new HashSet<>();
 		academicYearSheet.rowIterator().forEachRemaining(row->{
 			if(row.getRowNum()>0) {
 				AcademicYear academicYear = new AcademicYear();
@@ -73,7 +72,7 @@ public class AcademicYearServiceImpl implements AcademicYearService{
 				Optional<Institution> institution = institutionRepository.findById(new Double(row.getCell(2).getNumericCellValue()).intValue());
 				institution.ifPresent(academicYear::setInstitution);
 	        	academicYearRepository.save(academicYear);
-				AcademicYearDTO academicYearDTO = new AcademicYearDTO();
+				AcademicYearDto academicYearDTO = new AcademicYearDto();
 				academicYearDTO.setAcademicYearId(academicYear.getId());
 				academicYearDTO.setStartDate(academicYear.getStartDate());
 				academicYearDTO.setEndDate(academicYear.getEndDate());

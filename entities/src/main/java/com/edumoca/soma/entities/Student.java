@@ -1,14 +1,9 @@
 package com.edumoca.soma.entities;
 
-import java.time.LocalDate;
-
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
 import lombok.Data;
+
+import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @DiscriminatorValue(value = "STUDENT")
@@ -16,7 +11,7 @@ import lombok.Data;
 public class Student extends AppUser { 
 	@ManyToOne
     @JoinColumn(name = "GRADE_SECTION_INSTITUTION_YEAR_MAP_ID")
-	private GradeSectionInstitutionYearMapping gradeSectionInstitutionYearMapping;
+	private GradeSectionInstitutionYearMap gradeSectionInstitutionYearMap;
 	@Column(name = "DOB")
     private LocalDate dateOfBirth;
 	@Column(name = "LRN")

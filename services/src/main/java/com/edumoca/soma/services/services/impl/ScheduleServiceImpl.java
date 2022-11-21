@@ -1,14 +1,18 @@
 package com.edumoca.soma.services.services.impl;
 
-import com.edumoca.soma.entities.*;
-import com.edumoca.soma.entities.dtos.ScheduleDTO;
-import com.edumoca.soma.entities.dtos.StudentDTO;
+import com.edumoca.soma.entities.CourseSession;
+import com.edumoca.soma.entities.GradeSectionInstitutionYearMap;
+import com.edumoca.soma.entities.Schedule;
+import com.edumoca.soma.entities.TeacherGradeSectionSubjectMap;
+import com.edumoca.soma.entities.dtos.ScheduleDto;
+import com.edumoca.soma.entities.dtos.StudentScheduleDto;
+import com.edumoca.soma.entities.dtos.TeacherScheduleDto;
 import com.edumoca.soma.entities.exception.DataNotFoundException;
 import com.edumoca.soma.entities.models.ScheduleResponse;
-import com.edumoca.soma.entities.models.StudentScheduleDTO;
-import com.edumoca.soma.entities.models.StudentScheduleResponse;
-import com.edumoca.soma.entities.models.TeacherScheduleDTO;
-import com.edumoca.soma.entities.repositories.*;
+import com.edumoca.soma.entities.repositories.CourseSessionRepository;
+import com.edumoca.soma.entities.repositories.GradeSectionInstitutionYearMapRepository;
+import com.edumoca.soma.entities.repositories.ScheduleRepository;
+import com.edumoca.soma.entities.repositories.TeacherGradeSectionSubjectMapRepository;
 import com.edumoca.soma.services.services.ScheduleService;
 import lombok.AllArgsConstructor;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -25,44 +29,44 @@ import java.util.stream.Collectors;
 public class ScheduleServiceImpl implements ScheduleService{
 
 	private final ScheduleRepository scheduleRepository;
-	private final GradeSectionInstitutionYearMappingRepository gradeSectionInstitutionYearMappingRepository;
-	private final TeacherGradeSectionSubjectMappingRepository teacherGradeSectionSubjectMappingRepository;
+	private final GradeSectionInstitutionYearMapRepository gradeSectionInstitutionYearMappingRepository;
+	private final TeacherGradeSectionSubjectMapRepository teacherGradeSectionSubjectMappingRepository;
 	private final CourseSessionRepository courseSessionRepository;
 
 	private final ModelMapper modelMapper;
 	@Override
-	public ScheduleDTO createSchedule(Schedule schedule) {
-		return modelMapper.map(scheduleRepository.save(schedule),ScheduleDTO.class);
+	public ScheduleDto createSchedule(Schedule schedule) {
+		return modelMapper.map(scheduleRepository.save(schedule), ScheduleDto.class);
 	}
 
 	@Override
-	public ScheduleDTO updateSchedule(Schedule schedule,Integer scheduleId) {
+	public ScheduleDto updateSchedule(Schedule schedule, Integer scheduleId) {
 		Optional<ScheduleResponse> scheduleResponse = Optional.ofNullable(scheduleRepository.getScheduleByScheduleId(scheduleId));
 		if(scheduleResponse.isPresent())
 			schedule.setScheduleId(scheduleId);
-		return modelMapper.map(scheduleRepository.save(schedule),ScheduleDTO.class);
+		return modelMapper.map(scheduleRepository.save(schedule), ScheduleDto.class);
 	}
 
 	@Override
-	public List<ScheduleDTO> getAllSchedulesByInstitution(Integer institutionId) {
+	public List<ScheduleDto> getAllSchedulesByInstitution(Integer institutionId) {
 		return scheduleRepository.getAllScheduleByInstitution(institutionId).stream().map(s->{
-			return modelMapper.map(s,ScheduleDTO.class);
+			return modelMapper.map(s, ScheduleDto.class);
 		}).collect(Collectors.toList());
 	}
 
 	@Override
-	public ScheduleDTO getScheduleByInstitutionAndSchedule(Integer institutionId, Integer scheduleId) {
+	public ScheduleDto getScheduleByInstitutionAndSchedule(Integer institutionId, Integer scheduleId) {
 		Optional<ScheduleResponse> scheduleResponse = Optional.ofNullable(scheduleRepository.getScheduleByInstitutionIdAndScheduleId(institutionId,scheduleId));
 		if(scheduleResponse.isPresent())
-			return modelMapper.map(scheduleResponse.get(),ScheduleDTO.class);
+			return modelMapper.map(scheduleResponse.get(), ScheduleDto.class);
 		else throw new DataNotFoundException("Schedule with id not found");
 	}
 
 	@Override
-	public List<StudentScheduleDTO> getScheduleByStudentLoginId(Integer userId, Date currentDate) {
+	public List<StudentScheduleDto> getScheduleByStudentLoginId(Integer userId, Date currentDate) {
 		return scheduleRepository.getScheduleByStudentLoginId(userId,currentDate).stream().map(user->{
 			List<DayOfWeek> dayOfWeekSet = scheduleRepository.getDayOfWeekByScheduleId(user.getScheduleId());
-			StudentScheduleDTO studentScheduleDTO = new StudentScheduleDTO();
+			StudentScheduleDto studentScheduleDTO = new StudentScheduleDto();
 		    BeanUtils.copyProperties(user,studentScheduleDTO);
 		    studentScheduleDTO.setDayOfWeekSet(dayOfWeekSet);
 			return studentScheduleDTO;
@@ -70,10 +74,10 @@ public class ScheduleServiceImpl implements ScheduleService{
 	}
 
 	@Override
-	public List<TeacherScheduleDTO> getScheduleByTeacherLoginId(Integer userId, Date currentDate) {
+	public List<TeacherScheduleDto> getScheduleByTeacherLoginId(Integer userId, Date currentDate) {
 		return scheduleRepository.getScheduleByTeacherLoginId(userId,currentDate).stream().map(user->{
 			List<DayOfWeek> dayOfWeekSet = scheduleRepository.getDayOfWeekByScheduleId(user.getScheduleId());
-			TeacherScheduleDTO teacherScheduleDTO = new TeacherScheduleDTO();
+			TeacherScheduleDto teacherScheduleDTO = new TeacherScheduleDto();
 			BeanUtils.copyProperties(user,teacherScheduleDTO);
 			teacherScheduleDTO.setDayOfWeekSet(dayOfWeekSet);
 			return teacherScheduleDTO;
@@ -81,9 +85,9 @@ public class ScheduleServiceImpl implements ScheduleService{
 	}
 
 	@Override
-	public Map<String,Set<ScheduleDTO>> loadSchedules(XSSFSheet schedulesSheet, String schedulesSheetName) {
-		Map<String,Set<ScheduleDTO>> schedulesMap = new HashMap<>();
-		Set<ScheduleDTO> schedulesSet = new HashSet<>();
+	public Map<String,Set<ScheduleDto>> loadSchedules(XSSFSheet schedulesSheet, String schedulesSheetName) {
+		Map<String,Set<ScheduleDto>> schedulesMap = new HashMap<>();
+		Set<ScheduleDto> schedulesSet = new HashSet<>();
         schedulesSheet.rowIterator().forEachRemaining(row->{
 			if(row.getRowNum()>0){
 				Schedule schedule = new Schedule();
@@ -98,14 +102,14 @@ public class ScheduleServiceImpl implements ScheduleService{
 				schedule.setDayOfWeeks(dayWeekSet);
 				schedule.setRecurring(row.getCell(4).getBooleanCellValue());
 				schedule.setFullDay(row.getCell(5).getBooleanCellValue());
-				Optional<GradeSectionInstitutionYearMapping> gradeSectionInstitutionYearMapping = gradeSectionInstitutionYearMappingRepository.findById(new Double(row.getCell(6).getNumericCellValue()).intValue());
-				gradeSectionInstitutionYearMapping.ifPresent(schedule::setGradeSectionInstitutionYearMapping);
-				Optional<TeacherGradeSectionSubjectMapping> teacherGradeSectionSubjectMapping = teacherGradeSectionSubjectMappingRepository.findById(new Double(row.getCell(7).getNumericCellValue()).intValue());
-				teacherGradeSectionSubjectMapping.ifPresent(schedule::setTeacherGradeSectionSubjectMapping);
+				Optional<GradeSectionInstitutionYearMap> gradeSectionInstitutionYearMapping = gradeSectionInstitutionYearMappingRepository.findById(new Double(row.getCell(6).getNumericCellValue()).intValue());
+				gradeSectionInstitutionYearMapping.ifPresent(schedule::setGradeSectionInstitutionYearMap);
+				Optional<TeacherGradeSectionSubjectMap> teacherGradeSectionSubjectMapping = teacherGradeSectionSubjectMappingRepository.findById(new Double(row.getCell(7).getNumericCellValue()).intValue());
+				teacherGradeSectionSubjectMapping.ifPresent(schedule::setTeacherGradeSectionSubjectMap);
 				Optional<CourseSession> courseSession = courseSessionRepository.findById(new Double(row.getCell(8).getNumericCellValue()).intValue());
 				courseSession.ifPresent(schedule::setSession);
 				scheduleRepository.save(schedule);
-				ScheduleDTO scheduleDTO = new ScheduleDTO();
+				ScheduleDto scheduleDTO = new ScheduleDto();
 				scheduleDTO.setScheduleId(schedule.getScheduleId());
 				scheduleDTO.setScheduleName(schedule.getScheduleName());
 				schedulesSet.add(scheduleDTO);

@@ -1,7 +1,8 @@
 package com.edumoca.soma.entities;
 
-import javax.persistence.*;
 import lombok.Data;
+
+import javax.persistence.*;
 
 @Entity
 @Data
