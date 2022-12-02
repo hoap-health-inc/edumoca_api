@@ -1,5 +1,6 @@
 package com.edumoca.soma.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -21,5 +22,6 @@ public class AcademicYear extends BaseEntity{
     private Calendar endDate;
     @OneToOne
     @JoinColumn(name = "INST_ID",referencedColumnName = "INST_ID",nullable = false)
+    @JsonIgnore
     private Institution institution;
 }

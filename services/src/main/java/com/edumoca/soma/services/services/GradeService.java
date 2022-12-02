@@ -12,7 +12,7 @@ public interface GradeService {
 	GradeDto createGrade(Grade grade);
 	GradeDto updateGrade(Grade grade, Integer gradeId);
 	List<GradeDto> getAllGradesByInstitution(Integer institutionId);
-	GradeDto getGradeByInstitutionAndGrade(Integer institutionId, Integer gradeId);
+	Grade getGradeByInstitutionAndGrade(Integer institutionId, Integer gradeId);
 
 	Map<String, Set<GradeDto>> loadGrades(XSSFSheet gradeSheet, String gradeSheetName);
 }

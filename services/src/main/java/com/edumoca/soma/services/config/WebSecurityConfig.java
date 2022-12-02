@@ -105,6 +105,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers("/topic/**/").permitAll().and()
                 .authorizeRequests().antMatchers("/teacherGradeSectionSubjectMapping/**/").permitAll().and()
                 .authorizeRequests().antMatchers("/loadExcelSheet/**/").permitAll().and()
+                .authorizeRequests().antMatchers("/quiz/**/").permitAll().and()
                 .authorizeRequests().antMatchers("/**/").denyAll()
                 // all other requests need to be authenticated
                 .anyRequest().authenticated().and().

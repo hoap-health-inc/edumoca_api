@@ -14,6 +14,8 @@ import com.edumoca.soma.entities.repositories.*;
 import com.edumoca.soma.services.fileUtils.FileOperationUtils;
 import com.edumoca.soma.services.services.ProfilePhotoService;
 import com.edumoca.soma.services.services.UsersService;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -21,6 +23,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.ZoneId;
@@ -105,7 +108,28 @@ public class UsersServiceImpl implements UsersService {
         return principalRepository.save(principal);
 	}
 
-	@Override
+    @Override
+    public SchoolAdmin registerSchoolAdmin(SchoolAdmin schoolAdmin){
+        if(schoolAdmin.getUserId()==0) {
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            String encrypted = encoder.encode(schoolAdmin.getPassword());
+            schoolAdmin.setPassword(encrypted);
+        }
+        return schoolAdminRepository.save(schoolAdmin);
+    }
+
+    @Override
+    public SuperAdmin registerSuperAdmin(SuperAdmin superAdmin){
+        if(superAdmin.getUserId()==0) {
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            String encrypted = encoder.encode(superAdmin.getPassword());
+            superAdmin.setPassword(encrypted);
+        }
+        return superAdminRepository.save(superAdmin);
+    }
+
+
+    @Override
     public Parent getParentById(Integer id) {
         Optional<Parent> parent = parentRepository.findById(id);
         if(parent.isPresent())

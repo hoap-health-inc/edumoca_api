@@ -1,11 +1,13 @@
 package com.edumoca.soma.entities.models;
 
+import com.edumoca.soma.entities.ScheduleStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
+import java.util.Set;
 
 @AllArgsConstructor
 @Getter

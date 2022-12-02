@@ -5,7 +5,7 @@ import lombok.Data;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "TOPIC",uniqueConstraints = {@UniqueConstraint(columnNames = {"TOPIC_NAME","CHAPTER_ID"})})
+@Table(name = "TOPIC",uniqueConstraints = {@UniqueConstraint(columnNames = {"TOPIC_NAME"})})
 @Data
 public class Topic extends BaseEntity{
     @Id
@@ -14,7 +14,4 @@ public class Topic extends BaseEntity{
     private int topicId;
     @Column(name = "TOPIC_NAME")
     private String name;
-    @ManyToOne
-    @JoinColumn(name = "CHAPTER_ID",referencedColumnName = "CHAPTER_ID")
-    private Chapter chapter;
 }

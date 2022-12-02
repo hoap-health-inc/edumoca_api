@@ -39,4 +39,5 @@ public class WorksheetPropsConfig {
 	private String schedules;
 	private String teacherGradeSectionSubjectMaps;
 	private String courseSession;
+	private String quiz;
 }

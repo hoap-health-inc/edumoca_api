@@ -17,6 +17,8 @@ public interface UsersService {
     HomeRoomTeacher registerHomeRoomTeacher(HomeRoomTeacher homeRoomTeacher);
     SubjectHead registerSubjectHead(SubjectHead subjectHead);
     Principal registerPrincipal(Principal principal);
+    SchoolAdmin registerSchoolAdmin(SchoolAdmin schoolAdmin);
+    SuperAdmin registerSuperAdmin(SuperAdmin superAdmin);
     Parent registerParent(Parent parent);
     Parent getParentById(Integer id);
     

@@ -45,10 +45,13 @@ public class GradeServiceImpl implements GradeService{
 	}
 
 	@Override
-	public GradeDto getGradeByInstitutionAndGrade(Integer institutionId, Integer gradeId) {
-		 Optional<GradeResponse> grade = Optional.ofNullable(gradeRepository.findGradeByInstitutionAndGradeId(institutionId, gradeId));
+	public Grade getGradeByInstitutionAndGrade(Integer institutionId, Integer gradeId) {
+		 //Optional<GradeResponse> grade = Optional.ofNullable(gradeRepository.findGradeByInstitutionAndGradeId(institutionId, gradeId));
+		Optional<Institution> institution = institutionRepository.findById(institutionId);
+		Optional<Grade> grade = Optional.ofNullable(gradeRepository.findByInstitutionAndGradeId(institution.get(), gradeId));
 		 if(grade.isPresent()) {
-			 return modelMapper.map(grade.get(), GradeDto.class);
+			 //return modelMapper.map(grade.get(), GradeDto.class);
+			 return grade.get();
 		 }else
 		 throw new DataNotFoundException("Grade with id not found");
 	}

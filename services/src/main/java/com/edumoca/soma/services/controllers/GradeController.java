@@ -38,7 +38,7 @@ public class GradeController {
 	}
 	
 	@GetMapping(value = "/{institutionId}/{gradeId}",produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<GradeDto> getGradeByInstitutionAndGrade(@PathVariable("institutionId") Integer institutionId, @PathVariable("gradeId") Integer gradeId) {
+	public ResponseEntity<Grade> getGradeByInstitutionAndGrade(@PathVariable("institutionId") Integer institutionId, @PathVariable("gradeId") Integer gradeId) {
 		return new ResponseEntity<>(gradeService.getGradeByInstitutionAndGrade(institutionId,gradeId),HttpStatus.OK);
 	}
 }

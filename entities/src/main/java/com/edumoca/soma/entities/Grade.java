@@ -1,6 +1,10 @@
 package com.edumoca.soma.entities;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 
@@ -18,6 +22,7 @@ public class Grade extends BaseEntity {
     private String gradeDescription;
     @ManyToOne
     @JoinColumn(name = "INST_ID",referencedColumnName = "INST_ID")
+    @JsonIgnore
     private Institution institution;
 }
 

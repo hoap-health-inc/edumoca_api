@@ -7,6 +7,7 @@ import lombok.Data;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
@@ -24,6 +25,8 @@ public class Schedule extends BaseEntity implements Serializable{
     private String scheduleName;
     @Column(name = "SCHEDULE_DATE")
     private LocalDateTime scheduleDateTime;
+    @Column(name = "SCHEDULE_DURATION")
+    private Duration scheduleDuration;
     @OneToOne
     @JoinColumn(name = "SESSION_ID")
     private CourseSession session;
@@ -49,9 +52,4 @@ public class Schedule extends BaseEntity implements Serializable{
     @OneToOne
     @JoinColumn(name = "TEACHER_GRADE_SECTION_SUBJECT_MAPPING_ID")//,nullable = false
     private TeacherGradeSectionSubjectMap teacherGradeSectionSubjectMap;
-    
-//  @Column(name = "SCHEDULE_DURATION")
-//  private Duration scheduleDuration;
-//  @JoinTable(name = "SCHEDULE_COURSE_SESSION", joinColumns = {@JoinColumn(name = "SCHEDULE_ID")}, inverseJoinColumns = {@JoinColumn(name = "SESSION_ID")})
-//  @JoinColumn(name = "SCHEDULE_ID",nullable = true)
 }
